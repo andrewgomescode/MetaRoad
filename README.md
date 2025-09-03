@@ -73,12 +73,32 @@ Customizações sugeridas (plugin próprio):
 
 ## Frontend (Next.js) — futuro
 
-- Conectar ao GraphQL do WordPress via Apollo Client.
-- Renderização híbrida: SSR para SEO e SSG para páginas estáticas.
-- Estilização com TailwindCSS.
-- Layout responsivo (desktop e mobile).
-- Página inicial com lista de guias por categoria/jogo.
-- Página de guia detalhada puxando dados do WordPress.
+- Usaremos React Query para consumo de dados no cliente (sem Apollo).
+- Páginas podem usar pré-render (ISR/SSG/SSR) no App Router e hidratar no cliente com React Query quando necessário.
+- GraphQL via `graphql-request` apontando para `http://localhost:8080/graphql` (configurável por env).
+
+### Como rodar o frontend
+
+1. Configure as variáveis:
+
+```
+cp frontend/.env.example frontend/.env.local
+```
+
+2. Instale e rode:
+
+```
+cd frontend
+npm install
+npm run dev
+```
+
+3. Acesse: `http://localhost:3000`
+
+Observações:
+
+- Endpoint GraphQL: defina `NEXT_PUBLIC_WP_GRAPHQL_ENDPOINT` em `.env.local`.
+- Exemplo de listagem de posts via WPGraphQL já incluso na página inicial.
 
 ## Deploy
 
@@ -137,7 +157,6 @@ Estrutura de campos ACF sugerida:
 
 2. Frontend (Next.js + React)
 
-- Conectar ao GraphQL do WordPress via Apollo Client.
 - SSR para SEO e SSG para páginas estáticas.
 - TailwindCSS e layout responsivo.
 - Home com lista de guias por categoria/jogo; página de guia detalhada.
