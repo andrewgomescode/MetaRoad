@@ -34,11 +34,25 @@ export async function POST(req: Request) {
     }
 
     const client = new GraphQLClient(endpoint);
-    const { registerUser } = await client.request(REGISTER, {
-      username,
-      email,
-      password,
-    });
+
+    interface RegisterUserResponse {
+      registerUser: {
+        user: {
+          id: string;
+          username: string;
+          email: string;
+        };
+      };
+    }
+
+    const { registerUser } = await client.request<RegisterUserResponse>(
+      REGISTER,
+      {
+        username,
+        email,
+        password,
+      }
+    );
 
     return NextResponse.json({ ok: true, user: registerUser?.user });
   } catch (e: any) {
