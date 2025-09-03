@@ -36,27 +36,24 @@ Por padrão, versões: WordPress 6.8.2, MariaDB 11.8. Os arquivos do WordPress s
 1. Configure variáveis de ambiente:
 
 ```
-cp wordpress/.env.example wordpress/.env
+cp .env.example .env
 ```
 
-Edite `wordpress/.env` conforme necessário (senhas, hostnames, URL do site e Deploy Hook da Vercel).
-
-2. Suba os serviços:
+2. Suba os serviços (na raiz do projeto):
 
 ```
-cd wordpress
 docker compose up -d
 ```
 
-3. Aguarde o WordPress iniciar (pode levar ~1-2 minutos). Em seguida, rode o script de inicialização para instalar, configurar e ativar plugins (WPGraphQL, ACF, Yoast, cache) e o plugin customizado com CPTs/ACF:
+3. Acesse o WP-Admin: `http://localhost:8080/wp-admin`.
 
-```
-./init.sh
-```
+Notas:
 
-4. Acesse o WP-Admin: `http://localhost:8080/wp-admin` com as credenciais do `.env`.
+- O core do WordPress não é versionado; é provisionado em um volume nomeado `wp_data`.
+- Apenas `wordpress/wp-content/plugins/` é versionado (para plugins customizados).
+- Banco: MariaDB 11.8; admin via phpMyAdmin em `http://localhost:9000`.
 
-Plugins instalados/ativados:
+Plugins obrigatórios (instale via WP-Admin ou WP-CLI):
 
 - WPGraphQL
 - WPGraphQL for ACF
@@ -64,7 +61,7 @@ Plugins instalados/ativados:
 - Yoast SEO
 - WP Super Cache
 
-O plugin `Meta Road Core` registra:
+Customizações sugeridas (plugin próprio):
 
 - CPTs: guias, builds, equipamentos
 - Campos ACF: título do guia, classe, build recomendada, nível sugerido, dificuldade, equipamentos necessários, imagens/vídeos
@@ -72,37 +69,16 @@ O plugin `Meta Road Core` registra:
 
 ### Endpoint GraphQL
 
-`http://localhost:8080/graphql`
+`http://localhost:8080/graphql` (após instalar WPGraphQL)
 
-## Frontend (Next.js)
+## Frontend (Next.js) — futuro
 
-1. Configure variáveis de ambiente:
-
-```
-cp frontend/.env.example frontend/.env.local
-```
-
-Defina `NEXT_PUBLIC_WP_GRAPHQL_ENDPOINT` com a URL do GraphQL do WordPress.
-
-2. Instale dependências e rode localmente:
-
-```
-cd frontend
-pnpm install
-pnpm dev
-```
-
-3. Páginas
-
-- Home (`/`): lista de guias por categoria/jogo (SSG com ISR)
-- Guia (`/guides/[slug]`): página detalhada (SSR/SSG híbrido)
-
-### Tecnologias
-
-- App Router (Next.js 14)
-- Apollo Client (SSR Mode)
-- TailwindCSS
-- TypeScript estrito
+- Conectar ao GraphQL do WordPress via Apollo Client.
+- Renderização híbrida: SSR para SEO e SSG para páginas estáticas.
+- Estilização com TailwindCSS.
+- Layout responsivo (desktop e mobile).
+- Página inicial com lista de guias por categoria/jogo.
+- Página de guia detalhada puxando dados do WordPress.
 
 ## Deploy
 
@@ -131,33 +107,14 @@ Para novos jogos:
 ## Estrutura
 
 ```
+docker-compose.yml
+.env.example
+docs/
+  wordpress-docker-setup.md
 wordpress/
-  docker-compose.yml
-  .env.example
-  init.sh
-  wp-content/plugins/meta-road-core/
-    meta-road-core.php
-    includes/
-      cpt.php
-      acf.php
-      webhook.php
-
-frontend/
-  app/
-    layout.tsx
-    page.tsx
-    guides/[slug]/page.tsx
-  components/
-    GuideCard.tsx
-  lib/
-    apollo.ts
-    queries.ts
-  styles/globals.css
-  tailwind.config.ts
-  tsconfig.json
-  next.config.mjs
-  package.json
-  .env.example
+  wp-content/
+    plugins/
+      .gitkeep (ou seus plugins versionados)
 ```
 
 ## Observações
@@ -165,56 +122,40 @@ frontend/
 - Habilite e configure o WP Super Cache no WP-Admin (ou via WP-CLI) para máxima performance.
 - Recomenda-se Cloudflare como CDN para backend e Vercel Edge para frontend.
 
-## PROMPT INICIAL DO PROJETO:
-
-Crie um projeto web de guias de jogos inspirado no Maxroll.gg com as seguintes características:
+## Regras do projeto
 
 1. Backend (WordPress Headless)
 
 - Instalação em servidor VPS ou Cloud.
 - CMS exclusivamente para gerenciar conteúdo.
-- Plugins obrigatórios:
-- WPGraphQL para expor conteúdo via GraphQL.
-- Advanced Custom Fields (ACF) para campos personalizados.
-- Yoast SEO para otimização de buscas.
-- WP Super Cache ou equivalente para performance.
+- Plugins obrigatórios: WPGraphQL, Advanced Custom Fields (ACF), Yoast SEO, WP Super Cache (ou equivalente).
 - Criar Custom Post Types para guias, builds, equipamentos.
 
 Estrutura de campos ACF sugerida:
 
-- Título do guia
-- Classe
-- Build recomendada
-- Nível sugerido
-- Dificuldade
-- Equipamentos necessários
-- Imagens ou vídeos ilustrativos
+- Título do guia, Classe, Build recomendada, Nível sugerido, Dificuldade, Equipamentos necessários, Imagens/Vídeos.
 
 2. Frontend (Next.js + React)
 
 - Conectar ao GraphQL do WordPress via Apollo Client.
-- Renderização híbrida: SSR para SEO e SSG para páginas estáticas.
-- Estilização com TailwindCSS.
-- Layout responsivo para desktop e mobile.
-- Página inicial com lista de guias por categoria/jogo.
-- Página de guia detalhada puxando dados do WordPress.
+- SSR para SEO e SSG para páginas estáticas.
+- TailwindCSS e layout responsivo.
+- Home com lista de guias por categoria/jogo; página de guia detalhada.
 - Deploy na Vercel com rebuild automático ao atualizar conteúdo no WordPress.
 
 3. Infraestrutura
 
-- Backend hospedado em VPS/Cloud (HostGator, Kinsta ou similar).
-- Frontend hospedado em Vercel.
+- Backend em VPS/Cloud (HostGator, Kinsta, etc.).
+- Frontend em Vercel.
 - Configurar CDN e cache para alta performance.
 
 4. Funcionalidades futuras
 
-- Multi-jogos (possibilidade de expandir para outros jogos além de MapleStory Classic).
-- Sistema de login e gerenciamento de usuários (mais adiante).
-- SEO avançado, filtros e ranking de builds.
+- Multi-jogos, login/usuários, SEO avançado, filtros e ranking de builds.
 
 5. Entregáveis
 
 - Estrutura do WordPress com CPTs e ACF configurados.
-- Frontend Next.js funcional consumindo GraphQL.
+- Frontend Next.js consumindo GraphQL.
 - Deploy completo (frontend + backend).
-- Documentação do projeto com instruções de como adicionar novos guias e jogos.
+- Documentação para adicionar novos guias e jogos.
