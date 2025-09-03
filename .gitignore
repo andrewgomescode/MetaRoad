@@ -1,0 +1,56 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE/Editor
+.vscode/
+.idea/
+*.code-workspace
+
+# Node/Next.js (futuro)
+node_modules/
+.next/
+out/
+.turbo/
+.cache/
+coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.tsbuildinfo
+
+# Environment files
+.env
+.env.*
+!.env.example
+!exemplo.niv
+
+# Docker
+docker-compose.override.yml
+.docker/
+*.pid
+
+# WordPress content (dinâmico)
+wordpress/
+!wordpress/wp-content/
+!wordpress/wp-content/plugins/
+!wordpress/wp-content/plugins/**
+wordpress/wp-content/uploads/
+wordpress/wp-content/cache/
+wordpress/wp-content/upgrade/
+wordpress/wp-content/debug.log
+wordpress/wp-content/ai1wm-backups/
+wordpress/wp-content/backups-*/
+wordpress/wp-content/languages/*-*.mo
+
+# Database dumps
+db/*.sql
+db/*.dump
+db/*.tar
+db/*.gz
+
+# Logs
+logs/
+*.log
+
