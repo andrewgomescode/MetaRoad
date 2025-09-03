@@ -5,6 +5,27 @@ Projeto inspirado no Maxroll.gg com backend WordPress headless e frontend Next.j
 - `wordpress/`: infraestrutura e plugin customizado (CPTs, ACF, webhook Vercel)
 - `frontend/`: aplicação Next.js com SSR/SSG, Apollo e Tailwind
 
+## Quick Start (Docker)
+
+1. Copie o exemplo de variáveis e ajuste senhas se desejar:
+
+```
+cp .env.example .env
+```
+
+2. Suba os serviços:
+
+```
+docker compose up -d
+```
+
+3. Acesse:
+
+- WordPress: `http://localhost:8080` (admin em `/wp-admin` na primeira configuração)
+- phpMyAdmin: `http://localhost:9000` (host `db`, porta 3306)
+
+Por padrão, versões: WordPress 6.8.2, MariaDB 11.8. Os arquivos do WordPress são gerenciados por um volume nomeado (`wp_data`), não é necessário versionar o core.
+
 ## Requisitos
 
 - Docker e Docker Compose (para backend)
@@ -144,3 +165,56 @@ frontend/
 - Habilite e configure o WP Super Cache no WP-Admin (ou via WP-CLI) para máxima performance.
 - Recomenda-se Cloudflare como CDN para backend e Vercel Edge para frontend.
 
+## PROMPT INICIAL DO PROJETO:
+
+Crie um projeto web de guias de jogos inspirado no Maxroll.gg com as seguintes características:
+
+1. Backend (WordPress Headless)
+
+- Instalação em servidor VPS ou Cloud.
+- CMS exclusivamente para gerenciar conteúdo.
+- Plugins obrigatórios:
+- WPGraphQL para expor conteúdo via GraphQL.
+- Advanced Custom Fields (ACF) para campos personalizados.
+- Yoast SEO para otimização de buscas.
+- WP Super Cache ou equivalente para performance.
+- Criar Custom Post Types para guias, builds, equipamentos.
+
+Estrutura de campos ACF sugerida:
+
+- Título do guia
+- Classe
+- Build recomendada
+- Nível sugerido
+- Dificuldade
+- Equipamentos necessários
+- Imagens ou vídeos ilustrativos
+
+2. Frontend (Next.js + React)
+
+- Conectar ao GraphQL do WordPress via Apollo Client.
+- Renderização híbrida: SSR para SEO e SSG para páginas estáticas.
+- Estilização com TailwindCSS.
+- Layout responsivo para desktop e mobile.
+- Página inicial com lista de guias por categoria/jogo.
+- Página de guia detalhada puxando dados do WordPress.
+- Deploy na Vercel com rebuild automático ao atualizar conteúdo no WordPress.
+
+3. Infraestrutura
+
+- Backend hospedado em VPS/Cloud (HostGator, Kinsta ou similar).
+- Frontend hospedado em Vercel.
+- Configurar CDN e cache para alta performance.
+
+4. Funcionalidades futuras
+
+- Multi-jogos (possibilidade de expandir para outros jogos além de MapleStory Classic).
+- Sistema de login e gerenciamento de usuários (mais adiante).
+- SEO avançado, filtros e ranking de builds.
+
+5. Entregáveis
+
+- Estrutura do WordPress com CPTs e ACF configurados.
+- Frontend Next.js funcional consumindo GraphQL.
+- Deploy completo (frontend + backend).
+- Documentação do projeto com instruções de como adicionar novos guias e jogos.
