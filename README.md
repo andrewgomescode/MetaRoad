@@ -1,9 +1,9 @@
 # MetaRoad – Guias de Jogos (Headless WordPress + Next.js)
 
-Projeto inspirado no Maxroll.gg com backend WordPress headless e frontend Next.js (App Router), Apollo Client e TailwindCSS. Este repositório contém:
+Projeto inspirado no Maxroll.gg com backend WordPress headless e frontend Next.js (App Router), React Query e TailwindCSS. Este repositório contém:
 
 - `wordpress/`: infraestrutura e plugin customizado (CPTs, ACF, webhook Vercel)
-- `frontend/`: aplicação Next.js com SSR/SSG, Apollo e Tailwind
+- `frontend/`: aplicação Next.js com SSR/SSG, React Query e Tailwind
 
 ## Quick Start (Docker)
 
@@ -69,12 +69,23 @@ Customizações sugeridas (plugin próprio):
 
 ### Endpoint GraphQL
 
-`http://localhost:8080/graphql` (após instalar WPGraphQL)
+`http://localhost:8080/graphql` (após instalar WPGraphQL e configurar permalinks)
 
-## Frontend (Next.js) — futuro
+Ative o WPGraphQL e ajuste os permalinks (Post name) no WP‑Admin para evitar 404 no `/graphql`.
 
-- Usaremos React Query para consumo de dados no cliente (sem Apollo).
-- Páginas podem usar pré-render (ISR/SSG/SSR) no App Router e hidratar no cliente com React Query quando necessário.
+Opcional (via WP-CLI):
+
+```
+MSYS_NO_PATHCONV=1 docker run --rm --network metaroad_wp_network --volumes-from metaroad_wordpress wordpress:cli-php8.2 wp plugin activate wp-graphql --allow-root --path=/var/www/html
+MSYS_NO_PATHCONV=1 docker run --rm --network metaroad_wp_network --volumes-from metaroad_wordpress wordpress:cli-php8.2 wp rewrite structure '/%postname%/' --hard --allow-root --path=/var/www/html
+MSYS_NO_PATHCONV=1 docker run --rm --network metaroad_wp_network --volumes-from metaroad_wordpress wordpress:cli-php8.2 wp rewrite flush --hard --allow-root --path=/var/www/html
+```
+
+## Frontend (Next.js)
+
+- Next.js 15.5 com App Router.
+- React Query para consumo de dados no cliente (sem Apollo).
+- Pré-render (ISR/SSG/SSR) no App Router e hidratação no cliente com React Query quando necessário.
 - GraphQL via `graphql-request` apontando para `http://localhost:8080/graphql` (configurável por env).
 
 ### Como rodar o frontend
@@ -99,6 +110,12 @@ Observações:
 
 - Endpoint GraphQL: defina `NEXT_PUBLIC_WP_GRAPHQL_ENDPOINT` em `.env.local`.
 - Exemplo de listagem de posts via WPGraphQL já incluso na página inicial.
+- Configuração adicionada: `outputFileTracingRoot` no `frontend/next.config.mjs` para evitar warnings de múltiplos lockfiles.
+
+### Solução de problemas
+
+- `/graphql` retorna 404: verifique se o plugin WPGraphQL está ativo e se os permalinks estão como "Post name". Alternativamente, teste `http://localhost:8080/?graphql`.
+- Erro de conexão via WP-CLI: finalize a instalação do WordPress em `/wp-admin` e confirme a existência do `wp-config.php` antes de rodar os comandos WP-CLI acima.
 
 ## Deploy
 
